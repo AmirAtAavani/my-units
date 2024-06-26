@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="9"/>
+    <General>
+      <Flags>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+      </Flags>
+      <SessionStorage Value="InProjectDir"/>
+      <MainUnit Value="0"/>
+      <Title Value="FactorUsingSAT"/>
+      <UseAppBundle Value="False"/>
+      <ResourceType Value="res"/>
+    </General>
+    <i18n>
+      <EnableI18N LFM="False"/>
+    </i18n>
+    <VersionInfo>
+      <StringTable ProductVersion=""/>
+    </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <local>
+        <FormatVersion Value="1"/>
+        <CommandLineParams Value="--Mode Factoring   --SatSolverType CNFCollection --OutputFilename inc12.cnf --FactorizerMode  ModuloRep --ModuloMode Mode1 --verbosity 0   --AddModuloMod IncByTwoToM_1 --InputNumber 1023"/>
+      </local>
+    </RunParams>
+    <Units Count="12">
+      <Unit0>
+        <Filename Value="FactorUsingSAT.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="../General-Purpose-Units/GenericCollectionUnit.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="../SAT-Solver-Units/General/ClauseUnit.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="../Algortihmic-Unit/BigInt.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="BinaryEncodingBasedFactoringUnit.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="../SAT-Solver-Units/Circuits/Arithmetic-Circuits/BinaryArithmeticCircuitUnit.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="../SAT-Solver-Units/SatSolverInterfaceUnit.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="../SAT-Solver-Units/Circuits/BaseCircuitUnit.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="../General-Purpose-Units/GenericStackUnit.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="../SAT-Solver-Units/MiniSAT/MiniSatSolverInterfaceUnit.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="../Unicode-Functions/WideStringUnit.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="../../FPC/fpc/packages/fcl-stl/src/gvector.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit11>
+    </Units>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <Target>
+      <Filename Value="FactorUsingSAT"/>
+    </Target>
+    <SearchPaths>
+      <OtherUnitFiles Value="../General-Purpose-Units;../SAT-Solver-Units/General;../Algortihmic-Unit;../SAT-Solver-Units/Circuits/Arithmetic-Circuits;../SAT-Solver-Units;../SAT-Solver-Units/Circuits;../SAT-Solver-Units/MiniSAT;../Unicode-Functions;../../../Mine/FPC/fpc/packages/fcl-stl/src"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+    </SearchPaths>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="4">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+      <Item4>
+        <Name Value="ENameNotFound"/>
+      </Item4>
+    </Exceptions>
+  </Debugging>
+</CONFIG>
