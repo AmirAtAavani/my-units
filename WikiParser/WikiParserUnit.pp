@@ -7,7 +7,7 @@ unit WikiParserUnit;
 interface
 
 uses
-  Classes, SysUtils, Laz2_DOM, WikiDocUnit;
+  Classes, SysUtils, WikiDocUnit;
 
 type
 
@@ -92,7 +92,7 @@ type
 
   { EInvalidToken }
 
-  EInvalidToken = class(Exception)
+  EInvalidToken = class(EBaseWikiParser)
   public
     constructor Create(Visited, Expected: TTokenType);
     constructor Create(constref Visited: AnsiString);
@@ -480,25 +480,6 @@ begin
   end;
 end;
 
-function ParseWiki(Start, Last: PChar): TWikiPage;
-var
-  Child: TDOMNode;
-
-begin
-  Result := TWikiPage.Create;
-  //Child := Node.FirstChild;
-
-  while Child <> nil do
-  begin
-    //if not ParseWikiNode(Child, Result) then
-    begin
-      FreeAndNil(Result);
-      Break;
-    end;
-
-    Child := Child.NextSibling;
-  end;
-end;
 
 function TToken.IsEmpty: Boolean;
 begin
@@ -588,7 +569,7 @@ begin
     Inc(pc2);
 
   end;
-  Result := True;;
+  Result := True;
 
 end;
 
@@ -728,7 +709,7 @@ begin
   Token := Tokenizer.LastToken;
   ALoggerUnit.GetLogger.FMTDebugLn('it: %d Token: %s  %d', [
     it,
-    Token.Text,
+    WideStringUnit.WriteAsUTF8(Token.Text),
     Token.TokenType], 4);
   if IsDone(Token, EndTokens) then
   begin
@@ -737,7 +718,7 @@ begin
       WriteLn;
       }
     ALoggerUnit.GetLogger.FMTDebugLn('Token: %s  %d', [
-      Token.Text,
+      WideStringUnit.WriteAsUTF8(Token.Text),
       Token.TokenType], 4);
     Exit(nil);
 
@@ -777,7 +758,7 @@ begin
         '+Unrecognized Token: %s %s',
         [
         TokenTypeToString(Token.TokenType),
-        Token.Text]);
+        WideStringUnit.WriteAsUTF8(Token.Text)]);
       FreeAndNil(Result);
       raise EInvalidEntity.Create(Token);
     end;
@@ -803,7 +784,7 @@ var
 
 begin
   Result := nil;
-  if Token.HasSuffix(WideString('/>')) then
+  if Token.HasSuffix('/>') then
   begin
     Tokenizer.GetNextToken;
     Exit(TTagEntity.Create(Copy(Token.Text, 2, Token.Length - 3), nil));
@@ -880,7 +861,9 @@ function TWikiParser.ParseTextEntity(constref Token: TToken; EndTokens: TTokens
   ): TTextWikiEntity;
 begin
   if not (Token.TokenType in [ttText, ttSingleQuote, ttDoubleQuote, ttNewLine]) then
-    ALoggerUnit.GetLogger.FmtFatalLn('TokenType: %s', [Token.Text]);
+    ALoggerUnit.GetLogger.FmtFatalLn(
+      'TokenType: %s', [
+      WideStringUnit.WriteAsUTF8(Token.Text)]);
 
   EndTokens := MakeTokens([
 	  ttOpenHeadingSection,
@@ -1497,7 +1480,8 @@ begin
 
   _GetNextToken(LastToken);
   ALoggerUnit.GetLogger.FMTDebugLn('%d Token: %s  %d',
-    [it, LastToken.Text, LastToken.TokenType],
+    [it, WideStringUnit.WriteAsUTF8(LastToken.Text),
+      LastToken.TokenType],
     4);
   Inc(it);
 
