@@ -10,7 +10,7 @@ uses
   SyncUnit, ProtoHelperUnit, HeapUnit, sysutils,
   MapReduceUnit, StreamUnit, MapReduce.MapperUnit,
   MapReduce.KeyValueUnit, MapReduce.GraphUnit, MapReduce.ReaderUnit,
-MapReduce.UtilsUnits;
+MapReduce.UtilsUnits, StepHandlerUnit;
 
 function f(constref KV: MapReduce.KeyValueUnit.TKeyValue; Sink: TSink): boolean;
 begin
@@ -35,7 +35,7 @@ begin
   Result := TGraph.Create('g1');
   Input := Result.AddInput('/tmp/p11.pdf', TTextLineReader.Create('/tmp/p11.pdf'));
 
-  o1 := Input.Reshard(16).Map(@f).Reshard(32).Map(@g).Reshard(32);
+  o1 := Input.Reshard(16).Map(@f).Reshard(32).Map(@g).Reshard(16);
   o1.
     SetDestination('/tmp/o1@16');
 

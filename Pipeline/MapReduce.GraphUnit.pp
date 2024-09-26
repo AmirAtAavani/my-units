@@ -29,6 +29,7 @@ type
     end;
   protected
     FParent: TNode;
+    Children: TNodes;
     Transitions: specialize TCollection<TTransition>;
     DestinationPatten: TPattern;
 
@@ -80,6 +81,7 @@ type
   protected
     FName: AnsiString;
     FInputs: TNodes;
+    Compiled: Boolean;
 
   public
     property Inputs: TNodes read FInputs;
@@ -91,8 +93,6 @@ type
 
     procedure MustCompile;
 
-    function Run(RunConfig: TRunConfig): boolean;
-
     function ExportAsPipeline(Config: TPipelineConfig): TPipeline;
   end;
 
@@ -101,6 +101,13 @@ implementation
 
 type
   EIncompatibleSettings = class(Exception)
+  end;
+
+  { EGraphIsNotCompiled }
+
+  EGraphIsNotCompiled = class(Exception)
+  public
+    constructor Create;
   end;
 
   { TThreadPool }
@@ -122,6 +129,14 @@ type
 
   end;
 
+{ EGraphIsNotCompiled }
+
+constructor EGraphIsNotCompiled.Create;
+begin
+  inherited Create('Please call MustCompile function!');
+
+end;
+
   { TInputNode }
 
 constructor TInputNode.Create(constref p: AnsiString; Reader: TReader);
@@ -139,7 +154,10 @@ constructor TNode.Create(_Parent: TNode);
 begin
   inherited Create;
 
+  Self.Children := TNodes.Create;
   FParent := _Parent;
+  if Parent <> nil then
+    FParent.Children.Add(Self);
   Transitions := (specialize TCollection<TTransition>).Create;
   FShardCount := 1;
 
@@ -168,6 +186,7 @@ var
   Transition: TTransition;
 begin
   Result := TNode.Create(Self);
+  Result.FShardCount := Self.ShardCount;
   Transition.Target := Result;
   Transition.Mapper := TMapper.CreateFromFuncMapper(FuncMapper);
 
@@ -189,7 +208,11 @@ var
   Transition: TTransition;
 
 begin
+  if (Self.ShardCount mod n <> 0) and (n mod Self.ShardCount <> 0) then
+    raise EIncompatibleSettings.Create(
+      Format('Reshard to %d shard(s) is not valid', [n]));
   Result := TNode.Create(Self);
+  Result.FShardCount := n;
   Transition.Target := Result;
   Transition.ReshardTo := n;
 
@@ -242,7 +265,7 @@ begin
   inherited Create;
 
   FInputs := TNodes.Create;
-
+  Compiled := False;
 end;
 
 destructor TGraph.Destroy;
@@ -261,17 +284,47 @@ end;
 
 procedure TGraph.MustCompile;
 begin
-
-end;
-
-function TGraph.Run(RunConfig: TRunConfig): boolean;
-begin
+  Self.Compiled := True;
 
 end;
 
 function TGraph.ExportAsPipeline(Config: TPipelineConfig): TPipeline;
-begin
+  function IsVisited(aNode: TNode; VisitedNodes: TNodes): Boolean;
+  var
+    n: TNode;
 
+  begin
+    for n in VisitedNodes do
+      if n = aNode then
+        Exit(True);
+
+    Result := False;
+  end;
+var
+  Queue: TNodes;
+  FoQ: Integer;
+  Node: TNode;
+
+
+begin
+  if not Self.Compiled then
+    raise EGraphIsNotCompiled.Create;
+
+  Result := TPipeline.Create(Self.FName, Config);
+  Foq := 0;
+  Queue := TNodes.Create;
+
+  for Node in Self.Inputs do
+  begin
+    if IsVisited(Node, Queue) then
+      Queue.Add(Node);
+  end;
+
+  while FoQ < Queue.Count do
+  begin
+    Node := Queue[FoQ];
+
+  end;
 end;
 
 

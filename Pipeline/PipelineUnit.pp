@@ -10,7 +10,33 @@ uses
 
 type
   TTask = class;
-  TStepHandler = function(Task: TTask): Boolean;
+  TStepHandlerFunc = function(Task: TTask): Boolean;
+
+  { TStepHandler }
+
+  TStepHandler = class(TObject)
+  public
+    constructor Create;
+    class function CreateFromFunction(f: TStepHandlerFunc): TStepHandler;
+
+    function Handle(Task: TTask): Boolean; virtual; abstract;
+
+  end;
+
+  { TFunctionStepHandler }
+
+  TFunctionStepHandler = class(TStepHandler)
+  protected
+    FFn: TStepHandlerFunc;
+
+  public
+    constructor Create(Fn: TStepHandlerFunc);
+
+    function Handle(Task: TTask): Boolean; override;
+
+  end;
+
+
   TObjectList = specialize TObjectCollection<TObject>;
 
   { TPipelineConfig }
@@ -144,6 +170,36 @@ begin
 
 end;
 
+{ TStepHandler }
+
+constructor TStepHandler.Create;
+begin
+  inherited;
+
+end;
+
+class function TStepHandler.CreateFromFunction(f: TStepHandlerFunc
+  ): TStepHandler;
+begin
+  Result := TFunctionStepHandler.Create(f);
+
+end;
+
+{ TFunctionStepHandler }
+
+constructor TFunctionStepHandler.Create(Fn: TStepHandlerFunc);
+begin
+  inherited Create;
+
+  FFn := Fn;
+end;
+
+function TFunctionStepHandler.Handle(Task: TTask): Boolean;
+begin
+  Result := Self.FFn(Task);
+
+end;
+
 { TPipeline.TStepInfo }
 
 constructor TPipeline.TStepInfo.Create(_StepID: Integer; _NumTasks: Integer;
@@ -188,7 +244,7 @@ begin
 
   ALoggerUnit.GetLogger.FMTDebugLn('StepID: %d TaskID: %d', [Step.ID, Task.ID], 5);
 
-  Result := Task.StepInfo.StepHandler(Task);
+  Result := Task.StepInfo.StepHandler.Handle(Task);
 
   ALoggerUnit.GetLogger.FMTDebugLn('wg.Done Task: %d Result: %s',
     [Task.ID, BoolToStr(Result, True)], 5);
