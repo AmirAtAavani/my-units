@@ -34,6 +34,8 @@ type
 
     function Handle(Task: TTask): Boolean; override;
 
+    class function FromFunc(Fn: TStepHandlerFunc): TFunctionStepHandler;
+
   end;
 
 
@@ -197,6 +199,13 @@ end;
 function TFunctionStepHandler.Handle(Task: TTask): Boolean;
 begin
   Result := Self.FFn(Task);
+
+end;
+
+class function TFunctionStepHandler.FromFunc(Fn: TStepHandlerFunc
+  ): TFunctionStepHandler;
+begin
+  Result := TFunctionStepHandler.Create(Fn);
 
 end;
 
